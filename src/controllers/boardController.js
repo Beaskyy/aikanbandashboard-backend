@@ -51,3 +51,24 @@ const createBoard = asyncHandler(async (req, res) => {
   });
   res.status(201).json({ board });
 });
+
+const getBoard = asyncHandler(async (req, res) => {
+
+  const boardId = req.board.id
+
+  if (!boardId) throw ApiError.badRequest("Board id is required");
+
+  const { rows: boards } = await query(
+    `
+    SELECT b.*, (b.owner_id = $2) AS is_owner
+    FROM boards b
+    LEFT JOIN board_members m
+    ON m.board_id = b.id AND m.user_id = $2
+    WHERE b.id = $1 AND (b.owner_id = $2 OR m.user_id = $2)
+    `,
+    [boardId, req.user.id],
+  );
+  const board = boards[0];
+  if (!board) throw ApiError.notFound("Board not found");
+
+})
