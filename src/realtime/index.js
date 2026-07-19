@@ -8,7 +8,7 @@ const setIo = (instance) => {
 
 const boardRoom = (boardId) => `board:${boardId}`;
 
-const emitBoard = (boardId, event, payload) => {
+const emitToBoard = (boardId, event, payload) => {
   if (io) io.to(boardRoom(boardId)).emit(event, payload);
 };
 
@@ -30,4 +30,4 @@ const logActivity = async ({ boardId, userId, action, message, metadata }) => {
   return activity;
 };
 
-module.exports = { setIo, emitBoard, logActivity, boardRoom };
+module.exports = { setIo, emitToBoard, logActivity, boardRoom };
