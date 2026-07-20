@@ -23,7 +23,7 @@ const createColumn = asyncHandler(async (req, res) => {
 const updateColumn = asyncHandler(async (req, res) => {
   const { title, position } = req.body;
   const { rows } = await query(`
-    UPDATE colums
+    UPDATE columns
     SET title = COALESCE($3, title),
     position = COALESCE($4, position)
     WHERE id = $1 AND board_id = $2 RETURNING *`,
