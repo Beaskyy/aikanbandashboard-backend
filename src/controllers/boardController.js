@@ -33,12 +33,12 @@ const createBoard = asyncHandler(async (req, res) => {
     const { rows } = await client.query(
       `INSERT INTO boards (title, description, color, owner_id)
       VALUES ($1, $2, $3, $4) RETURNING *`,
-      [title, description, color.req.user.id],
+      [title, description, color, req.user.id],
     );
     const b = rows[0];
 
     await client.query(
-      `INSERT INTO board_members (board_id, user_id, role) VALUES ($1, $2, owner)`,
+      `INSERT INTO board_members (board_id, user_id, role) VALUES ($1, $2, 'owner')`,
       [b.id, req.user.id],
     );
 
@@ -62,8 +62,8 @@ const getBoard = asyncHandler(async (req, res) => {
     ]),
     query(
       `SELECT t.*,
-      a.name AS assignee_name, a.email AS assignee_email, a.avatar_url AS assignee_avatar, 
-      FROM task t
+      a.name AS assignee_name, a.email AS assignee_email, a.avatar_url AS assignee_avatar
+      FROM tasks t
       LEFT JOIN users a ON a.id = t.assignee_id
       WHERE t.board_id = $1
       ORDER BY t.position ASC`,
@@ -84,7 +84,7 @@ const getBoard = asyncHandler(async (req, res) => {
     columns: columnRes.rows,
     tasks: taskRes.rows,
     members: memberRes.rows,
-    role: res,
+    role: req.board.role,
   });
 });
 
@@ -115,10 +115,10 @@ const deleteBoard = asyncHandler(async (req, res) => {
 });
 
 const getActivity = asyncHandler(async (req, res) => {
-  const limit = Math.min(parseInt(req.query.limit, 10 || 30, 100));
+  const limit = Math.min(parseInt(req.query.limit, 10) || 30, 100);
   const { rows } = await query(
     `
-    SELECT act.*, u.name AS user_name, u.avater AS user_avatar
+    SELECT act.*, u.name AS user_name, u.avatar_url AS user_avatar
     FROM activities act
     LEFT JOIN users u ON u.id = act.user_id
     WHERE act.board_id = $1
