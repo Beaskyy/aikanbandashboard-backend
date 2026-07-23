@@ -208,4 +208,4 @@ module.exports = {
   updateTask,
   moveTask,
   deleteTask,
-}
+};
