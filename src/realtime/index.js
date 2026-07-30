@@ -26,7 +26,7 @@ const logActivity = async ({ boardId, userId, action, message, metadata }) => {
     ],
   );
   const activity = rows[0];
-  emitBoard(boardId, "activity:new", activity);
+  emitToBoard(boardId, "activity:new", activity);
   return activity;
 };
 
