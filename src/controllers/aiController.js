@@ -107,4 +107,4 @@ const summarizeBoard = asyncHandler(async (req, res) => {
   res.json({ summary });
 });
 
-module.exports = { generateTasks, breakdownTask, summarizeBoard };
+module.exports = { generateTasks, breakdownTask, summarizeBoard }
